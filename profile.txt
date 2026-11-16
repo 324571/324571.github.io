@@ -5,11 +5,11 @@
 # ============================================================
 
 name=Paulina Sommer
-title1=Student MMI
+title1=Student Master Marketing Intelligence
 
-title2=
+title2=Bachelor Marketingkommunikation und Werbung
 
-expertise=Digital Marketing, Social Media, 
+expertise=Digital Marketing, Social Media, Website
 
 education=Master Marketing Intelligence
 
@@ -23,4 +23,4 @@ about4=tbd
 
 phone=+491601804356
 
-location=
+location=Heilbronn
