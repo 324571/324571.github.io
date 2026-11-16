@@ -16,10 +16,10 @@ education=Master Marketing Intelligence
 email=paulina.sommer@gmx.de
 linkedin=https://www.linkedin.com/in/paulina-sommer-729186258/
 
-about1=tbd
-about2=tbd
-about3=tbd
-about4=tbd
+about1=Paulina earned her B.Sc. in Marketingcommunication und Advertisement from Pforzheim University, and her M.Sc. in Marketing Intelligence in 2027 from Pforzheim University as well.
+about2=
+about3=
+about4=
 
 phone=+491601804356
 
