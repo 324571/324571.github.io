@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MediaPipe Demo</title>
+<style>
+  :root { --accent:#5eead4; --accent2:#818cf8; --panel:rgba(17,22,38,.88); }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html,body { height:100%; background:#0a0a12; color:#e5e7eb; overflow:hidden;
+    font-family:"Segoe UI",system-ui,-apple-system,sans-serif; }
+  #particles { position:fixed; inset:0; width:100%; height:100%; }
+  header { position:fixed; top:22px; left:0; right:0; text-align:center; pointer-events:none; z-index:2; }
+  h1 { font-size:clamp(26px,4vw,46px); font-weight:800; letter-spacing:.12em;
+    background:linear-gradient(90deg,#60a5fa,#a78bfa,#e879f9); -webkit-background-clip:text;
+    background-clip:text; color:transparent; filter:drop-shadow(0 0 14px rgba(167,139,250,.45)); }
+  #info { position:fixed; left:18px; bottom:18px; width:min(480px,calc(100vw - 36px)); z-index:3;
+    background:var(--panel); border:1px solid rgba(255,255,255,.08); border-radius:14px;
+    padding:20px 22px; backdrop-filter:blur(8px); font-size:15px; }
+  #clock { font-size:26px; font-weight:700; color:var(--accent); font-variant-numeric:tabular-nums; }
+  #date { color:#a5b4fc; margin:6px 0 12px; }
+  .row { margin:8px 0 6px; }
+  .val { font-weight:700; color:#fcd34d; }
+  .gest { font-weight:700; color:#4ade80; }
+  .bar { height:7px; border-radius:4px; background:#1f2937; overflow:hidden; }
+  .bar > div { height:100%; width:0; border-radius:4px;
+    background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width .15s; }
+  .hint { margin-top:12px; font-size:12.5px; color:#9ca3af; }
+  #cam { position:fixed; right:18px; bottom:18px; width:min(440px,40vw); aspect-ratio:4/3; z-index:3;
+    border:2px solid rgba(94,234,212,.55); border-radius:14px; overflow:hidden; background:#000;
+    box-shadow:0 0 24px rgba(94,234,212,.2); }
+  #cam video, #cam canvas { position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+    transform:scaleX(-1); }
+  #start { position:fixed; inset:0; z-index:10; display:flex; flex-direction:column; gap:16px;
+    align-items:center; justify-content:center; background:rgba(5,5,12,.82); }
+  #start button { font-size:18px; font-weight:700; padding:14px 30px; border:0; border-radius:999px;
+    cursor:pointer; color:#0a0a12; background:linear-gradient(90deg,var(--accent),var(--accent2)); }
+  #status { color:#9ca3af; font-size:14px; max-width:420px; text-align:center; }
+  @media (max-width:760px){ #cam{ width:46vw; } #info{ font-size:13px; padding:14px; width:calc(54vw - 30px);} }
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+
+<header><h1 id="title">MediaPipe Demo</h1></header>
+
+<div id="info">
+  <div id="clock">--:--:--</div>
+  <div id="date">----</div>
+  <div class="row">Hand: <span id="hand">–</span> <span class="gest" id="gesture">Keine Hand</span></div>
+  <div class="row">Öffnung: <span class="val" id="openTxt">0%</span></div>
+  <div class="bar"><div id="openBar"></div></div>
+  <div class="row">Abstand zum Bildschirm: <span class="val" id="distTxt">–</span></div>
+  <div class="bar"><div id="distBar"></div></div>
+  <div class="row">Form: <span class="val" id="shapeTxt">Herz</span> &nbsp;Farbe: <span class="val" id="colorTxt">Gold</span></div>
+  <div class="hint">Faust → offene Hand wechselt Form &amp; Farbe · Näher an die Kamera verkleinert die Partikel</div>
+</div>
+
+<div id="cam">
+  <video id="video" playsinline muted></video>
+  <canvas id="overlay"></canvas>
+</div>
+
+<div id="start">
+  <button id="startBtn">▶ Kamera starten</button>
+  <div id="status">Die Kamera wird nur lokal im Browser verwendet. Es werden keine Bilder hochgeladen.</div>
+</div>
+
+<script type="module">
+import { FilesetResolver, HandLandmarker, FaceLandmarker, DrawingUtils }
+  from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
+
+/* ===== Einstellungen ===== */
+const statusEl = document.getElementById("status");
+const TITLE = "MediaPipe Demo";          // ← hier eigenen Titel / Matrikelnummer eintragen
+const PARTICLE_COUNT = 2600;
+document.getElementById("title").textContent = TITLE;
+document.title = TITLE;
+
+/* ===== Uhr ===== */
+const WD = ["So","Mo","Di","Mi","Do","Fr","Sa"];
+function tick(){
+  const d = new Date(), p = n => String(n).padStart(2,"0");
+  clock.textContent = `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+  date.textContent = `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${WD[d.getDay()]}`;
+}
+setInterval(tick, 1000); tick();
+
+/* ===== Formen (Punkte in Einheitskoordinaten ~[-1,1]) ===== */
+const TAU = Math.PI*2;
+function sampleCurve(fn, n){ const pts=[]; for(let i=0;i<n;i++) pts.push(fn(Math.random()*TAU)); return pts; }
+const SHAPES = [
+  { name:"Herz", gen:n => sampleCurve(t => {
+      const x=16*Math.sin(t)**3, y=13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t);
+      return [x/17, -y/17 - 0.08]; }, n) },
+  { name:"Stern", gen:n => { const pts=[], v=[];
+      for(let i=0;i<10;i++){ const a=-Math.PI/2+i*TAU/10, r=i%2?0.42:1; v.push([Math.cos(a)*r,Math.sin(a)*r]); }
+      for(let i=0;i<n;i++){ const k=Math.floor(Math.random()*10), a=v[k], b=v[(k+1)%10], s=Math.random();
+        pts.push([a[0]+(b[0]-a[0])*s, a[1]+(b[1]-a[1])*s]); } return pts; } },
+  { name:"Blume", gen:n => sampleCurve(t => { const r=0.55+0.45*Math.cos(5*t); return [r*Math.cos(t), r*Math.sin(t)]; }, n) },
+  { name:"Unendlich", gen:n => sampleCurve(t => { const d=1+Math.sin(t)**2;
+      return [1.05*Math.cos(t)/d, 1.05*Math.sin(t)*Math.cos(t)/d]; }, n) },
+  { name:"Kreis", gen:n => sampleCurve(t => [Math.cos(t)*0.9, Math.sin(t)*0.9], n) },
+  { name:"Spirale", gen:n => { const pts=[]; for(let i=0;i<n;i++){ const s=Math.random(), t=s*TAU*3;
+      pts.push([Math.cos(t)*s, Math.sin(t)*s]); } return pts; } },
+];
+const COLORS = [
+  { name:"Gold",    hues:[[255,214,64],[255,150,40]] },
+  { name:"Pink",    hues:[[255,105,180],[255,170,220]] },
+  { name:"Cyan",    hues:[[64,224,255],[94,234,212]] },
+  { name:"Violett", hues:[[167,139,250],[232,121,249]] },
+  { name:"Grün",    hues:[[74,222,128],[190,242,100]] },
+  { name:"Feuer",   hues:[[255,90,50],[255,190,60]] },
+];
+let shapeIdx = 0, colorIdx = 0;
+
+/* ===== Partikel ===== */
+const pc = document.getElementById("particles"), ctx = pc.getContext("2d");
+let W, H, DPR;
+function resize(){ DPR=Math.min(devicePixelRatio||1,2); W=innerWidth; H=innerHeight;
+  pc.width=W*DPR; pc.height=H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
+addEventListener("resize", resize); resize();
+
+const parts = Array.from({length:PARTICLE_COUNT}, () => ({
+  x:Math.random()*W, y:Math.random()*H, vx:0, vy:0, tx:0, ty:0,
+  jx:(Math.random()-.5)*0.09, jy:(Math.random()-.5)*0.09,
+  size:0.8+Math.random()*2.4, ph:Math.random()*TAU, c:Math.random()
+}));
+function applyShape(){
+  const pts = SHAPES[shapeIdx].gen(PARTICLE_COUNT);
+  parts.forEach((p,i) => { p.tx=pts[i][0]; p.ty=pts[i][1]; });
+  shapeTxt.textContent = SHAPES[shapeIdx].name;
+  colorTxt.textContent = COLORS[colorIdx].name;
+}
+applyShape();
+
+// Steuergrößen (geglättet)
+let openness = 0.6, distance = 0.5, sOpen = 0.6, sDist = 0.5, handSeen = false;
+
+function drawParticles(t){
+  sOpen += (openness - sOpen)*0.08;
+  sDist += (distance - sDist)*0.08;
+  ctx.globalCompositeOperation = "source-over";
+  ctx.fillStyle = "rgba(10,10,18,0.32)";
+  ctx.fillRect(0,0,W,H);
+  ctx.globalCompositeOperation = "lighter";
+
+  const cx = W/2, cy = H*0.47;
+  // Öffnung → Größe, Nähe → kleiner
+  const base = Math.min(W,H)*0.30;
+  const scale = base * (0.35 + 0.85*sOpen) * (1.25 - 0.75*sDist);
+  const scatter = 0.25 + (1-sOpen)*0.6;   // geschlossene Faust = enger, flimmernder Kern
+  const [c1,c2] = COLORS[colorIdx].hues;
+
+  for(const p of parts){
+    const wob = Math.sin(t*0.002 + p.ph)*0.03;
+    const gx = cx + (p.tx + p.jx*scatter*2 + wob)*scale;
+    const gy = cy + (p.ty + p.jy*scatter*2 + Math.cos(t*0.0017+p.ph)*0.03)*scale;
+    p.vx = (p.vx + (gx-p.x)*0.012)*0.88;
+    p.vy = (p.vy + (gy-p.y)*0.012)*0.88;
+    p.x += p.vx; p.y += p.vy;
+    const tw = 0.55 + 0.45*Math.sin(t*0.004 + p.ph*3);
+    const r = c1[0]+(c2[0]-c1[0])*p.c, g = c1[1]+(c2[1]-c1[1])*p.c, b = c1[2]+(c2[2]-c1[2])*p.c;
+    ctx.fillStyle = `rgba(${r|0},${g|0},${b|0},${0.55*tw})`;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.size*(0.7+0.5*tw), 0, TAU); ctx.fill();
+  }
+}
+
+/* ===== MediaPipe ===== */
+const video = document.getElementById("video");
+const ov = document.getElementById("overlay"), octx = ov.getContext("2d");
+let hands, face, draw, lastVideoTime = -1, wasFist = false;
+
+async function init(){
+  statusEl.textContent = "Lade MediaPipe-Modelle …";
+  const fileset = await FilesetResolver.forVisionTasks(
+    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm");
+  hands = await HandLandmarker.createFromOptions(fileset, {
+    baseOptions:{ modelAssetPath:"https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task", delegate:"GPU" },
+    runningMode:"VIDEO", numHands:2 });
+  face = await FaceLandmarker.createFromOptions(fileset, {
+    baseOptions:{ modelAssetPath:"https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task", delegate:"GPU" },
+    runningMode:"VIDEO", numFaces:1 });
+  statusEl.textContent = "Starte Kamera …";
+  const stream = await navigator.mediaDevices.getUserMedia({ video:{ width:640, height:480, facingMode:"user" } });
+  video.srcObject = stream;
+  await video.play();
+  ov.width = video.videoWidth; ov.height = video.videoHeight;
+  draw = new DrawingUtils(octx);
+  document.getElementById("start").remove();
+}
+
+const d2 = (a,b) => Math.hypot(a.x-b.x, a.y-b.y);
+function analyseHand(lm){
+  const palm = d2(lm[0], lm[9]) || 1e-6;                 // Handgelenk → Mittelfinger-Grundgelenk
+  const tips = [8,12,16,20], mcps = [5,9,13,17];
+  let sum = 0;
+  tips.forEach((t,i) => sum += d2(lm[t], lm[0]) / d2(lm[mcps[i]], lm[0]));
+  // Verhältnis Fingerspitze/Grundgelenk: Faust ≈ 0.9, offen ≈ 2.0
+  const ratio = sum/4;
+  const open = Math.min(1, Math.max(0, (ratio - 1.0) / 0.9));
+  // Handgröße im Bild als Proxy für Abstand
+  const near = Math.min(1, Math.max(0, (palm - 0.08) / 0.22));
+  return { open, near };
+}
+
+function process(){
+  if (video.readyState < 2 || video.currentTime === lastVideoTime) return;
+  lastVideoTime = video.currentTime;
+  const now = performance.now();
+  const hr = hands.detectForVideo(video, now);
+  const fr = face.detectForVideo(video, now);
+
+  octx.clearRect(0,0,ov.width,ov.height);
+
+  if (fr.faceLandmarks?.length){
+    const f = fr.faceLandmarks[0];
+    const s = { color:"#f472b6", lineWidth:3 };
+    draw.drawConnectors(f, FaceLandmarker.FACE_LANDMARKS_LEFT_EYEBROW, s);
+    draw.drawConnectors(f, FaceLandmarker.FACE_LANDMARKS_RIGHT_EYEBROW, s);
+    draw.drawConnectors(f, FaceLandmarker.FACE_LANDMARKS_LIPS, s);
+    draw.drawConnectors(f, FaceLandmarker.FACE_LANDMARKS_LEFT_EYE, { color:"#c084fc", lineWidth:1.5 });
+    draw.drawConnectors(f, FaceLandmarker.FACE_LANDMARKS_RIGHT_EYE, { color:"#c084fc", lineWidth:1.5 });
+    draw.drawConnectors(f, FaceLandmarker.FACE_LANDMARKS_FACE_OVAL, { color:"rgba(255,255,255,.25)", lineWidth:1 });
+  }
+
+  if (hr.landmarks?.length){
+    hr.landmarks.forEach(lm => {
+      draw.drawConnectors(lm, HandLandmarker.HAND_CONNECTIONS, { color:"rgba(255,255,255,.75)", lineWidth:2 });
+      draw.drawLandmarks(lm, { color:"#5eead4", fillColor:"#0f172a", lineWidth:1.5, radius:3 });
+    });
+    // Erste Hand steuert. Kamerabild ist nicht gespiegelt → Label tauschen.
+    const raw = hr.handedness[0][0].categoryName;
+    const label = raw === "Left" ? "Rechts" : "Links";
+    const { open, near } = analyseHand(hr.landmarks[0]);
+    openness = open; distance = near; handSeen = true;
+
+    let g, icon;
+    if (open < 0.25){ g="Faust"; icon="✊"; }
+    else if (open < 0.7){ g="Halb offen"; icon="👋"; }
+    else { g="Offen"; icon="🖐️"; }
+
+    // Gestenwechsel Faust → offen = neue Form & Farbe
+    if (open < 0.2) wasFist = true;
+    else if (wasFist && open > 0.75){
+      wasFist = false;
+      shapeIdx = (shapeIdx+1) % SHAPES.length;
+      colorIdx = (colorIdx+1) % COLORS.length;
+      applyShape();
+    }
+
+    hand.textContent = `${label} ${icon}`;
+    gesture.textContent = g;
+    openTxt.textContent = Math.round(open*100) + "%";
+    openBar.style.width = (open*100) + "%";
+    distTxt.textContent = near > 0.66 ? "Nah" : near > 0.33 ? "Mittel" : "Fern";
+    distBar.style.width = (near*100) + "%";
+  } else if (handSeen){
+    hand.textContent = "–"; gesture.textContent = "Keine Hand";
+    openness += (0.6 - openness)*0.02; distance += (0.5 - distance)*0.02;
+  }
+}
+
+function loop(t){
+  if (hands) { try { process(); } catch(e){ console.error(e); } }
+  drawParticles(t);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+// Ohne Kamera: Leertaste wechselt Form (zum Testen)
+addEventListener("keydown", e => { if (e.code === "Space"){
+  shapeIdx=(shapeIdx+1)%SHAPES.length; colorIdx=(colorIdx+1)%COLORS.length; applyShape(); }});
+
+startBtn.onclick = async () => {
+  startBtn.disabled = true;
+  try { await init(); }
+  catch(e){ console.error(e); startBtn.disabled = false;
+    statusEl.textContent = "Fehler: " + (e.message || e) + " – Seite über https:// oder localhost öffnen und Kamerazugriff erlauben."; }
+};
+</script>
+</body>
+</html>
