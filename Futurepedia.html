@@ -1,0 +1,2035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="narrative">
+  <meta name="design-style" content="briefing">
+  <title>The 2026 AI Systems Dossier — Ecosystems, Skills &amp; Vibe Coding</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js" defer></script>
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* 1. Briefing style tokens */
+      --background: #faf9f5;
+      --surface-container-low: #ffffff;
+      --surface-container: #f1efe8;
+      --surface-container-high: #e6e2d6;
+
+      --on-surface: #17181a;
+      --on-surface-variant: #56585c;
+
+      --outline: #17181a;
+      --outline-variant: #dedad0;
+      --btn-secondary-border: #c8c4b8;
+
+      --primary: #17181a;
+      --on-primary: #faf9f5;
+      --primary-container: #f2b705;
+      --on-primary-container: #17181a;
+      --secondary: #1f4e5f;
+      --on-secondary: #ffffff;
+      --secondary-tint: #e8f0f3;
+      --tertiary: #785008;
+      --chip-bg: #f5e6c4;
+      --error: #b42318;
+      --on-error: #ffffff;
+      --error-tint: #fdecec;
+
+      --data-1: #1f4e5f;
+      --data-2: #d99000;
+      --data-3: #2b6e52;
+      --data-4: #b84a39;
+      --data-context: #c4bfb2;
+
+      --font-headline: 'Source Serif 4', serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-label: 'Geist Mono', monospace;
+
+      --rounded: 0.25rem;
+      --rounded-lg: 0.375rem;
+      --rounded-full: 0.25rem;
+
+      --section-rule: 1.5px solid var(--outline);
+      --card-border: 1px solid var(--outline-variant);
+      --secondary-border: 1px solid var(--btn-secondary-border);
+      --badge-radius: 2px;
+      --heading-tracking: -0.02em;
+      --label-tracking: 0.08em;
+
+      /* 2. Shared foundation tokens */
+      --positive: #2b6e52;
+      --positive-tint: #e7f2ec;
+      --warning: #d99000;
+      --focus: #1f4e5f;
+
+      /* Narrative type scale */
+      --display-size: clamp(2.5rem, 1.4rem + 4vw, 4.25rem);
+      --headline-size: clamp(1.75rem, 1.2rem + 2vw, 2.5rem);
+      --subhead-size: clamp(1.1875rem, 1.05rem + 0.55vw, 1.4375rem);
+      --body-size: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+      --label-size: clamp(0.75rem, 0.72rem + 0.12vw, 0.8125rem);
+
+      /* Spacing scale (4pt base) */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+      --space-3xl: 6rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    header { position: static !important; }
+
+    .page-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-2xl);
+      padding: var(--space-xl) var(--space-lg) var(--space-3xl);
+      max-width: 1120px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .page-grid * { min-width: 0; }
+
+    /* Focus rings */
+    :focus-visible {
+      outline: 2.5px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    /* Dossier bars & section headers */
+    .dossier-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      border-bottom: var(--section-rule);
+      padding-bottom: var(--space-sm);
+      margin-bottom: var(--space-lg);
+    }
+    .dossier-bar-left {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .dossier-pill {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 0.6875rem;
+      letter-spacing: var(--label-tracking);
+      text-transform: uppercase;
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--badge-radius);
+      display: inline-block;
+    }
+    .dossier-meta {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 500;
+      color: var(--on-surface-variant);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* Typography */
+    h1, h2, h3, h4 {
+      font-family: var(--font-headline);
+      font-weight: 600;
+      letter-spacing: var(--heading-tracking);
+      color: var(--on-surface);
+      margin: 0;
+    }
+    .hero-title {
+      font-size: var(--display-size);
+      line-height: 1.06;
+      max-width: 22ch;
+    }
+    .section-title {
+      font-size: var(--headline-size);
+      line-height: 1.12;
+      max-width: 30ch;
+      margin-bottom: var(--space-sm);
+    }
+    .subhead {
+      font-size: var(--subhead-size);
+      line-height: 1.25;
+      margin-bottom: var(--space-xs);
+    }
+    .standfirst {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+      line-height: 1.5;
+      color: var(--secondary);
+      max-width: 62ch;
+      margin: var(--space-md) 0 0;
+    }
+    .prose {
+      max-width: 65ch;
+      margin: 0 0 var(--space-md);
+      color: var(--on-surface);
+    }
+    .prose-muted {
+      max-width: 65ch;
+      margin: 0 0 var(--space-md);
+      color: var(--on-surface-variant);
+    }
+
+    /* Quick navigation jump links */
+    .toc-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-top: var(--space-lg);
+      padding-top: var(--space-md);
+      border-top: var(--card-border);
+    }
+    .toc-link {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      min-height: 2.75rem;
+      padding: var(--space-xs) var(--space-md);
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded);
+      color: var(--on-surface);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      text-decoration: none;
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+    .toc-link:hover {
+      background: var(--surface-container);
+      border-color: var(--outline);
+    }
+    .toc-num {
+      color: var(--secondary);
+      font-weight: 600;
+    }
+
+    /* Cards & figure tiles */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+      gap: var(--space-lg);
+    }
+    .two-col-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: var(--space-xl);
+      align-items: start;
+    }
+    .equal-two-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-lg);
+    }
+    .figure-card {
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-lg);
+    }
+    .figure-card.highlighted {
+      border-color: var(--secondary);
+      box-shadow: inset 0 3px 0 var(--primary-container);
+    }
+    .figure-card .value {
+      font-family: var(--font-headline);
+      font-weight: 600;
+      font-size: clamp(2rem, 1.6rem + 1.4vw, 2.75rem);
+      line-height: 1.05;
+      font-variant-numeric: lining-nums tabular-nums;
+      color: var(--on-surface);
+      margin: var(--space-xs) 0;
+    }
+    .figure-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--on-surface-variant);
+    }
+    .figure-caption {
+      font-size: 0.9375rem;
+      color: var(--on-surface-variant);
+      margin: var(--space-xs) 0 0;
+    }
+
+    .index-num {
+      font-family: var(--font-label);
+      font-weight: 600;
+      font-size: var(--label-size);
+      color: var(--secondary);
+      display: inline-block;
+    }
+    .aside-box {
+      background: var(--surface-container);
+      border-top: var(--section-rule);
+      padding: var(--space-lg);
+      border-radius: 0 0 var(--rounded-lg) var(--rounded-lg);
+    }
+
+    /* Tags & badges */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      background: var(--chip-bg);
+      color: var(--tertiary);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--rounded);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .tag.slate {
+      background: var(--secondary-tint);
+      color: var(--secondary);
+    }
+    .tag.positive {
+      background: var(--positive-tint);
+      color: var(--positive);
+    }
+
+    /* Buttons & Interactive Controls */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      min-height: 2.75rem;
+      padding: var(--space-sm) var(--space-lg);
+      border-radius: var(--rounded);
+      font-family: var(--font-body);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-primary {
+      background: var(--primary);
+      color: var(--on-primary);
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--secondary);
+    }
+    .btn-secondary {
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      border: var(--secondary-border);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--surface-container);
+      border-color: var(--outline);
+    }
+
+    .pill-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+    .choice-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      min-height: 2.75rem;
+      padding: var(--space-sm) var(--space-md);
+      background: var(--surface-container-low);
+      border: var(--secondary-border);
+      border-radius: var(--rounded);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+    }
+    .choice-pill:hover {
+      background: var(--surface-container);
+    }
+    .choice-pill[aria-pressed="true"] {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--primary);
+    }
+
+    /* Form elements */
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .field-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--on-surface);
+    }
+    .text-input, .select-input, .textarea-input {
+      width: 100%;
+      font-family: var(--font-body);
+      font-size: 0.9375rem;
+      color: var(--on-surface);
+      background: var(--surface-container-low);
+      border: var(--secondary-border);
+      border-radius: var(--rounded);
+      padding: var(--space-sm) var(--space-md);
+      min-height: 2.75rem;
+      transition: border-color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+    }
+    .select-input {
+      padding-right: var(--space-xl);
+    }
+    .textarea-input {
+      min-height: 5.5rem;
+      resize: vertical;
+      line-height: 1.5;
+    }
+    .text-input:focus, .select-input:focus, .textarea-input:focus {
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 2px var(--secondary-tint);
+      outline: none;
+    }
+
+    /* Checkbox rows */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      min-height: 2.75rem;
+      padding: var(--space-xs) var(--space-sm);
+      background: var(--surface-container);
+      border-radius: var(--rounded);
+      cursor: pointer;
+      font-size: 0.9375rem;
+      font-weight: 500;
+    }
+    .toggle-row input[type="checkbox"] {
+      width: 1.125rem;
+      height: 1.125rem;
+      accent-color: var(--secondary);
+      flex-shrink: 0;
+    }
+
+    /* Prompt output terminal */
+    .prompt-output {
+      font-family: var(--font-label);
+      font-size: 0.875rem;
+      line-height: 1.55;
+      background: var(--surface-container);
+      border: var(--card-border);
+      border-left: 3px solid var(--secondary);
+      border-radius: var(--rounded);
+      padding: var(--space-md);
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: var(--on-surface);
+      margin: 0;
+    }
+    .status-note {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--positive);
+      font-weight: 600;
+      min-height: 1.25rem;
+    }
+    .status-note.error {
+      color: var(--error);
+    }
+
+    /* Tables */
+    .table-wrap {
+      overflow-x: auto;
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+    }
+    table.dossier-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9375rem;
+    }
+    table.dossier-table th {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--on-surface);
+      background: var(--surface-container);
+      border-bottom: var(--section-rule);
+      padding: var(--space-md);
+    }
+    table.dossier-table td {
+      padding: var(--space-md);
+      border-bottom: var(--card-border);
+      vertical-align: top;
+      font-variant-numeric: tabular-nums;
+    }
+    table.dossier-table tr:last-child td {
+      border-bottom: none;
+    }
+    table.dossier-table tr:hover td {
+      background: var(--background);
+    }
+
+    /* Step rows & Design system flow */
+    .step-list {
+      display: grid;
+      gap: var(--space-md);
+    }
+    .step-item {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: var(--space-md);
+      align-items: start;
+      padding: var(--space-md) var(--space-lg);
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+    }
+    .step-badge {
+      font-family: var(--font-label);
+      font-weight: 600;
+      font-size: var(--label-size);
+      color: var(--on-primary-container);
+      background: var(--primary-container);
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--badge-radius);
+    }
+
+    /* Container query example for dense comparison cards */
+    .card-wrapper { container-type: inline-size; }
+    .card-split {
+      display: grid;
+      gap: var(--space-md);
+      grid-template-columns: minmax(0, 1fr);
+    }
+    @container (min-width: 480px) {
+      .card-split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    }
+
+    /* SVG Diagram container */
+    .diagram-box {
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-lg);
+      overflow-x: auto;
+    }
+    .diagram-box svg {
+      width: 100%;
+      height: auto;
+      min-width: 620px;
+      display: block;
+    }
+
+    /* Checklist tracker */
+    .progress-track {
+      width: 100%;
+      height: 0.5rem;
+      background: var(--surface-container-high);
+      border-radius: var(--badge-radius);
+      overflow: hidden;
+      margin: var(--space-sm) 0 var(--space-md);
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--secondary);
+      width: 0%;
+      transition: width var(--dur-short) var(--ease-out);
+    }
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+    .checklist-item:hover {
+      background: var(--surface-container);
+    }
+    .checklist-item.done {
+      border-color: var(--positive);
+      background: var(--positive-tint);
+    }
+    .checklist-item input[type="checkbox"] {
+      width: 1.25rem;
+      height: 1.25rem;
+      margin-top: var(--space-xs);
+      accent-color: var(--positive);
+      flex-shrink: 0;
+    }
+
+    /* Collapsible methodology / details */
+    details.dossier-details {
+      background: var(--surface-container);
+      border-top: var(--section-rule);
+      padding: var(--space-md) var(--space-lg);
+      border-radius: 0 0 var(--rounded-lg) var(--rounded-lg);
+      margin-top: var(--space-md);
+    }
+    details.dossier-details summary {
+      font-family: var(--font-body);
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--secondary);
+      min-height: 2.75rem;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    /* Reveal animation */
+    .reveal {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity var(--dur-long) var(--ease-out), transform var(--dur-long) var(--ease-out);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Utilities */
+    .mt-xs { margin-top: var(--space-xs); }
+    .mt-sm { margin-top: var(--space-sm); }
+    .mt-md { margin-top: var(--space-md); }
+    .mt-lg { margin-top: var(--space-lg); }
+    .mt-xl { margin-top: var(--space-xl); }
+    .mb-sm { margin-bottom: var(--space-sm); }
+    .mb-md { margin-bottom: var(--space-md); }
+    code {
+      font-family: var(--font-label);
+      font-size: 0.875em;
+      background: var(--surface-container);
+      border: var(--card-border);
+      border-radius: var(--badge-radius);
+      padding: 0.1em 0.35em;
+    }
+    .row-end {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      align-items: end;
+    }
+    .inline-meta {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+    }
+    .icon-sm {
+      width: 1rem;
+      height: 1rem;
+      flex-shrink: 0;
+    }
+
+    /* Mobile breakpoint */
+    @media (max-width: 640px) {
+      .page-grid {
+        grid-template-columns: 1fr;
+        padding: var(--space-md);
+        gap: var(--space-xl);
+      }
+      .two-col-grid, .equal-two-grid {
+        grid-template-columns: 1fr;
+      }
+      .figure-card, .aside-box, .diagram-box {
+        padding: var(--space-md);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-grid">
+
+    <!-- OPENING DOSSIER HERO -->
+    <header>
+      <div class="dossier-bar">
+        <div class="dossier-bar-left">
+          <span class="dossier-pill">FIELD GUIDE</span>
+          <span class="dossier-meta">2026 AI WORKFLOWS &amp; TOOLS · SYNTHESIS OF 17 FUTUREPEDIA GUIDES</span>
+        </div>
+        <span class="dossier-meta" id="header-progress-readout">0 / 7 STEPS APPLIED</span>
+      </div>
+
+      <h1 class="hero-title">Stop Chasing AI Tools. Build One Deep System.</h1>
+      <p class="standfirst">
+        Most people stay stuck treating AI like a smarter search box while hopping between ten apps. Real leverage in 2026 comes from mastering one core ecosystem across four layers—then adding specialized tools only where it hits a ceiling.
+      </p>
+
+      <div class="card-grid mt-lg">
+        <article class="figure-card">
+          <span class="figure-label">Core Ecosystem Rule</span>
+          <div class="value">90%</div>
+          <p class="figure-caption">Share of daily knowledge, writing, coding, and workflow work handled inside a single deep ecosystem.</p>
+        </article>
+        <article class="figure-card">
+          <span class="figure-label">Capability Stack</span>
+          <div class="value">4 Layers</div>
+          <p class="figure-caption">Prompting &amp; Grounding → Projects &amp; Skills → Vibe Coding &amp; Design → Autonomous Delegation.</p>
+        </article>
+        <article class="figure-card">
+          <span class="figure-label">Specialized Edge</span>
+          <div class="value">10%</div>
+          <p class="figure-caption">Targeted tools like NotebookLM, Granola, Higgsfield, and n8n reserved for genuine platform gaps.</p>
+        </article>
+      </div>
+
+      <nav class="toc-strip" aria-label="Dossier sections">
+        <a class="toc-link" href="#sec-ecosystems"><span class="toc-num">01</span> Ecosystems</a>
+        <a class="toc-link" href="#sec-prompting"><span class="toc-num">02</span> Prompting</a>
+        <a class="toc-link" href="#sec-skills"><span class="toc-num">03</span> Projects &amp; Skills</a>
+        <a class="toc-link" href="#sec-building"><span class="toc-num">04</span> Design &amp; Vibe Coding</a>
+        <a class="toc-link" href="#sec-agents"><span class="toc-num">05</span> Delegation &amp; 10% Stack</a>
+        <a class="toc-link" href="#sec-checklist"><span class="toc-num">06</span> Action Plan</a>
+      </nav>
+    </header>
+
+    <!-- SECTION 01: ECOSYSTEMS -->
+    <section id="sec-ecosystems" class="reveal">
+      <div class="dossier-bar">
+        <div class="dossier-bar-left">
+          <span class="dossier-pill">01 · ECOSYSTEMS</span>
+          <span class="dossier-meta">CHATGPT · CLAUDE · GEMINI</span>
+        </div>
+        <span class="dossier-meta">ROSETTA STONE &amp; DIAGNOSTIC</span>
+      </div>
+
+      <h2 class="section-title">Going deep in one platform beats shallow mastery of ten</h2>
+      <p class="prose">
+        A beginner who learns one ecosystem deeply outperforms someone bouncing between five chat windows every week. Modern AI platforms compound over time: they store persistent project knowledge, learn your preferences, package repeatable processes into skills, and connect directly to your files and software. Every major capability now has a direct parallel across OpenAI, Anthropic, and Google—so the choice comes down to where your daily work lives.
+      </p>
+
+      <!-- Interactive Ecosystem Finder -->
+      <div class="figure-card mt-lg">
+        <div class="row-end" style="justify-content: space-between;">
+          <div>
+            <span class="figure-label">Interactive Diagnostic</span>
+            <h3 class="subhead mt-sm">Which ecosystem fits your primary workflow?</h3>
+          </div>
+          <span class="tag slate" id="eco-match-badge">RECOMMENDATION UPDATES LIVE</span>
+        </div>
+
+        <div class="equal-two-grid mt-md">
+          <div class="field-group">
+            <label class="field-label" for="eco-goal-select">Primary daily workload</label>
+            <select class="select-input" id="eco-goal-select" onchange="updateEcosystemFinder()">
+              <option value="writing-building">Writing, critiques, hooks &amp; custom software</option>
+              <option value="all-in-one">Broad all-in-one ops, image generation &amp; hosted sites</option>
+              <option value="google-research">Google Workspace, YouTube analysis &amp; deep research</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="eco-style-select">Preferred builder environment</label>
+            <select class="select-input" id="eco-style-select" onchange="updateEcosystemFinder()">
+              <option value="local-control">Desktop app working directly in local folders</option>
+              <option value="instant-cloud">One-click cloud sites, connectors &amp; scheduled runs</option>
+              <option value="free-labs">Free labs, node workflows &amp; Workspace side panels</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="aside-box mt-md" id="eco-recommendation-box" aria-live="polite">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Three Ecosystem Summary Cards -->
+      <div class="card-grid mt-lg" id="eco-cards-grid">
+        <article class="figure-card" id="eco-card-claude">
+          <div class="dossier-bar-left mb-sm">
+            <span class="index-num">A1</span>
+            <span class="tag">Writing &amp; Building Leader</span>
+          </div>
+          <h3 class="subhead">Claude (Anthropic)</h3>
+          <p class="prose-muted">
+            Best-in-class for editorial writing, hooks, critiques, and non-technical vibe coding via the unified desktop app (Home: Chat + Cowork, plus Code). Artifacts now absorb standalone Claude Design workflows.
+          </p>
+          <p class="inline-meta mt-sm"><strong>Watch-out:</strong> No native image generator; stricter 5-hour &amp; weekly token caps on Pro ($20/mo) compared to Max ($100/mo).</p>
+        </article>
+
+        <article class="figure-card" id="eco-card-chatgpt">
+          <div class="dossier-bar-left mb-sm">
+            <span class="index-num">A2</span>
+            <span class="tag">Broadest All-in-One</span>
+          </div>
+          <h3 class="subhead">ChatGPT (OpenAI)</h3>
+          <p class="prose-muted">
+            Shines on breadth: leading GPT Image 2.5 (Flare &amp; Sunburst), live-vision voice mode, ChatGPT Work for non-technical task delegation, instant hosted web apps via Sites (chatgpt.site), and higher Codex usage limits.
+          </p>
+          <p class="inline-meta mt-sm"><strong>Watch-out:</strong> Default prose often needs a humanizing pass; browser/computer use is still maturing.</p>
+        </article>
+
+        <article class="figure-card" id="eco-card-gemini">
+          <div class="dossier-bar-left mb-sm">
+            <span class="index-num">A3</span>
+            <span class="tag">Google Stack &amp; Video</span>
+          </div>
+          <h3 class="subhead">Gemini &amp; Google Labs</h3>
+          <p class="prose-muted">
+            Unmatched inside Gmail, Docs, Drive, and multi-link YouTube video analysis. Pairs natively with NotebookLM (notebooks plug directly into Gems) plus free Labs tools like Opal, Pomelli, Stitch, AI Studio, and Antigravity.
+          </p>
+          <p class="inline-meta mt-sm"><strong>Watch-out:</strong> Opal-based Gems inside Gemini require a paid plan, though free Labs remain accessible.</p>
+        </article>
+      </div>
+
+      <!-- Parallel Feature Rosetta Stone Table -->
+      <div class="table-wrap mt-lg">
+        <table class="dossier-table">
+          <thead>
+            <tr>
+              <th>Capability Layer</th>
+              <th>Claude (Anthropic)</th>
+              <th>ChatGPT (OpenAI)</th>
+              <th>Gemini (Google)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Persistent Knowledge</strong><br><span class="inline-meta">Context + files + memory</span></td>
+              <td>Projects (custom instructions, files, rolling daily memory)</td>
+              <td>Projects (instructions, files, automatic memory)</td>
+              <td>Notebooks &amp; NotebookLM sources linked into chats</td>
+            </tr>
+            <tr>
+              <td><strong>Side-Panel Creation</strong><br><span class="inline-meta">Interactive UI &amp; docs</span></td>
+              <td>Artifacts (Design canvas, Slides, Motion, interactive apps)</td>
+              <td>Canvas &amp; Work Blocks (editable email, code, Kanban)</td>
+              <td>Canvas &amp; Google Stitch (prompt/screenshot to UI)</td>
+            </tr>
+            <tr>
+              <td><strong>Reusable Workflows</strong><br><span class="inline-meta">Repeatable SOPs</span></td>
+              <td>Skills (Markdown recipe cards + Plugins)</td>
+              <td>Custom GPTs &amp; Work Skills (incl. screen-recorded skills)</td>
+              <td>Gems &amp; Opal node workflows</td>
+            </tr>
+            <tr>
+              <td><strong>Autonomous Delegation</strong><br><span class="inline-meta">Multi-step execution</span></td>
+              <td>Cowork (merged into Home tab; local files, sub-agents, Dispatch)</td>
+              <td>ChatGPT Work (cloud or desktop local files, scheduled tasks, browser)</td>
+              <td>Gemini Workspace side panel &amp; Opal automated flows</td>
+            </tr>
+            <tr>
+              <td><strong>Vibe Coding Builder</strong><br><span class="inline-meta">Full apps from English</span></td>
+              <td>Claude Code (Desktop/CLI/IDE, CLAUDE.md, Plan Mode, /goal)</td>
+              <td>Codex (Desktop/Mobile, AGENTS.md, Work Mode, Sites)</td>
+              <td>Google AI Studio ($300 free GCP deploy credits) &amp; Antigravity</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 02: PROMPTING & GROUNDING -->
+    <section id="sec-prompting" class="reveal">
+      <div class="dossier-bar">
+        <div class="dossier-bar-left">
+          <span class="dossier-pill">02 · PROMPTING &amp; GROUNDING</span>
+          <span class="dossier-meta">ICC FRAMEWORK · 3-STEP GROUNDING · HALLUCINATION GUARDS</span>
+        </div>
+        <span class="dossier-meta">INTERACTIVE BUILDER</span>
+      </div>
+
+      <h2 class="section-title">Complex prompt tricks are dead. Clear context and expert grounding win.</h2>
+      <p class="prose">
+        As models matured, brittle prompt gymnastics stopped mattering. What still separates generic fluff from executive-grade output is giving the AI the same three elements a skilled teammate needs: <strong>Instructions, Context, and Constraints (ICC)</strong>—paired with a <strong>Context Interview</strong> so the model asks for the details you forgot to mention.
+      </p>
+
+      <div class="two-col-grid mt-lg">
+        <!-- Left: Interactive ICC + Grounding Prompt Builder -->
+        <div class="figure-card">
+          <div class="dossier-bar-left mb-sm">
+            <span class="index-num">B1</span>
+            <span class="tag slate">Prompt Synthesizer</span>
+          </div>
+          <h3 class="subhead">Build an ICC + Grounded Prompt</h3>
+          <p class="prose-muted">Load a real scenario preset or type your own parameters to generate a structured prompt with built-in interview and verification guards.</p>
+
+          <div class="pill-group mt-md mb-md" role="group" aria-label="Prompt presets">
+            <button type="button" class="choice-pill" onclick="applyPromptPreset('launch')" aria-pressed="false">Product Launch Plan</button>
+            <button type="button" class="choice-pill" onclick="applyPromptPreset('dashboard')" aria-pressed="false">Comment Analyzer App</button>
+            <button type="button" class="choice-pill" onclick="applyPromptPreset('strategy')" aria-pressed="false">Operations Audit</button>
+          </div>
+
+          <div class="step-list">
+            <div class="field-group">
+              <label class="field-label" for="pb-instructions">1. Instructions (Action &amp; deliverable)</label>
+              <input type="text" class="text-input" id="pb-instructions" oninput="renderPromptBuilder()" value="Build a 30-day go-to-market launch plan for a new B2B productivity app">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="pb-context">2. Context (Role, audience, constraints &amp; background)</label>
+              <textarea class="textarea-input" id="pb-context" oninput="renderPromptBuilder()">Solo founder launching to non-technical operations managers. Budget is under $1,500; existing distribution is a 4,000-subscriber newsletter.</textarea>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="pb-constraints">3. Constraints (Tone, format &amp; output structure)</label>
+              <input type="text" class="text-input" id="pb-constraints" oninput="renderPromptBuilder()" value="Direct, zero fluff. Output as a week-by-week markdown table with owner, channel, and measurable KPI.">
+            </div>
+
+            <label class="toggle-row">
+              <input type="checkbox" id="pb-interview" checked onchange="renderPromptBuilder()">
+              <span>Append Context Interview (ask clarifying questions before drafting)</span>
+            </label>
+            <label class="toggle-row">
+              <input type="checkbox" id="pb-anchor" checked onchange="renderPromptBuilder()">
+              <span>Add Expert Anchor Grounding (anchor to named frameworks, not generic averages)</span>
+            </label>
+            <label class="toggle-row">
+              <input type="checkbox" id="pb-guards" onchange="renderPromptBuilder()">
+              <span>Add Hallucination Guards (confidence levels, sources, counter-argument)</span>
+            </label>
+          </div>
+
+          <div class="mt-lg">
+            <span class="field-label" id="pb-output-label">Generated prompt preview</span>
+            <pre class="prompt-output mt-sm" id="pb-output-text" aria-labelledby="pb-output-label"></pre>
+            <div class="row-end mt-md" style="justify-content: space-between;">
+              <button type="button" class="btn btn-primary" onclick="copyGeneratedPrompt()">
+                <i data-lucide="copy" class="icon-sm" aria-hidden="true"></i>
+                Copy Prompt
+              </button>
+              <span class="status-note" id="pb-copy-status" aria-live="polite"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: The 3-Step System & 4 Hallucination Guards -->
+        <div class="step-list">
+          <article class="aside-box">
+            <span class="figure-label">The 3-Step System for High-Stakes Work</span>
+            <h3 class="subhead mt-xs">Beat generic "internet-average" advice</h3>
+            <div class="step-list mt-md">
+              <div>
+                <span class="index-num">STEP 01 · EXPERT ANCHOR (GROUNDING)</span>
+                <p class="prose-muted mt-xs">Ask the AI to name top practitioners and their signature operating frameworks in your niche—then instruct it to reason strictly from those mechanisms instead of generic templates.</p>
+              </div>
+              <div>
+                <span class="index-num">STEP 02 · CONTEXT EXTRACTION</span>
+                <p class="prose-muted mt-xs">Tell the model to interview you one round at a time. It knows which constraints, bottlenecks, and edge cases it needs far better than you can guess up front.</p>
+              </div>
+              <div>
+                <span class="index-num">STEP 03 · METAPROMPT SYNTHESIS</span>
+                <p class="prose-muted mt-xs">Have the AI synthesize your interview answers and chosen framework into a clean system prompt or reference document you can reuse inside a Project.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="figure-card">
+            <span class="figure-label">Verification Protocol</span>
+            <h3 class="subhead mt-xs">Four Ways to Catch Hallucinations</h3>
+            <ul style="margin: var(--space-sm) 0 0; padding-left: var(--space-lg); display: grid; gap: var(--space-sm);">
+              <li><strong>Force confidence scores:</strong> Require the model to flag any claim below high certainty.</li>
+              <li><strong>Mandate clickable citations:</strong> Turn web search on or use NotebookLM so claims trace to exact passages.</li>
+              <li><strong>Ask for a disagreeing expert:</strong> Prompt it to find credible counter-evidence against its own answer.</li>
+              <li><strong>Cross-model critique:</strong> Paste a draft from one model into another—AI models critique far better than they self-verify.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 03: PROJECTS, MEMORY & SKILLS -->
+    <section id="sec-skills" class="reveal">
+      <div class="dossier-bar">
+        <div class="dossier-bar-left">
+          <span class="dossier-pill">03 · MEMORY &amp; SKILLS</span>
+          <span class="dossier-meta">PERSISTENT KNOWLEDGE VS. PERSISTENT PROCESSES</span>
+        </div>
+        <span class="dossier-meta">ARCHITECTURE &amp; DIRECTORY</span>
+      </div>
+
+      <h2 class="section-title">Projects teach AI who you are. Skills teach it how you execute.</h2>
+      <p class="prose">
+        Starting a fresh chat every morning is like hiring a brand-new employee every day and re-explaining your company from scratch. Setting up a <strong>Project</strong> hands that employee the handbook: custom instructions, brand assets, and rolling memory. Creating a <strong>Skill</strong> hands them the exact SOP recipe card—so multi-step workflows run the same way on the first try across Chat, Cowork, and Code.
+      </p>
+
+      <!-- Architecture Schematic SVG -->
+      <div class="diagram-box mt-lg">
+        <span class="figure-label">System Schematic · How Context &amp; Skills Compound</span>
+        <svg viewBox="0 0 860 250" role="img" aria-label="Diagram showing how Projects provide persistent knowledge, Connectors link external apps, and Skills package repeatable workflows across Chat, Cowork, and Code">
+          <!-- Column 1: Persistent Knowledge -->
+          <rect x="12" y="24" width="230" height="200" rx="6" fill="var(--surface-container)" stroke="var(--outline-variant)" stroke-width="1.5"/>
+          <rect x="12" y="24" width="230" height="32" rx="4" fill="var(--secondary)"/>
+          <text x="26" y="45" fill="var(--on-secondary)" font-family="Geist Mono, monospace" font-size="11" font-weight="600">01 · PROJECTS (KNOWLEDGE)</text>
+          <text x="26" y="82" fill="var(--on-surface)" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="600">Custom Instructions</text>
+          <text x="26" y="100" fill="var(--on-surface-variant)" font-family="Plus Jakarta Sans, sans-serif" font-size="11">Role, tone &amp; strict guardrails</text>
+          <line x1="26" y1="114" x2="226" y2="114" stroke="var(--outline-variant)" stroke-width="1"/>
+          <text x="26" y="136" fill="var(--on-surface)" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="600">Reference Files &amp; /init</text>
+          <text x="26" y="154" fill="var(--on-surface-variant)" font-family="Plus Jakarta Sans, sans-serif" font-size="11">PDFs, brand docs, CLAUDE.md</text>
+          <line x1="26" y1="168" x2="226" y2="168" stroke="var(--outline-variant)" stroke-width="1"/>
+          <text x="26" y="190" fill="var(--on-surface)" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="600">Rolling Project Memory</text>
+          <text x="26" y="208" fill="var(--on-surface-variant)" font-family="Plus Jakarta Sans, sans-serif" font-size="11">Auto-learns from past chats</text>
+
+          <!-- Connector Arrow 1 -->
+          <line x1="246" y1="124" x2="294" y2="124" stroke="var(--outline)" stroke-width="2"/>
+          <polygon points="294,119 304,124 294,129" fill="var(--outline)"/>
+
+          <!-- Column 2: Skills & Connectors -->
+          <rect x="308" y="24" width="244" height="200" rx="6" fill="var(--surface-container-low)" stroke="var(--outline)" stroke-width="1.5"/>
+          <rect x="308" y="24" width="244" height="32" rx="4" fill="var(--primary-container)"/>
+          <text x="322" y="45" fill="var(--on-primary-container)" font-family="Geist Mono, monospace" font-size="11" font-weight="600">02 · SKILLS &amp; MCP CONNECTORS</text>
+          <text x="322" y="82" fill="var(--on-surface)" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="600">Markdown Recipe Cards</text>
+          <text x="322" y="100" fill="var(--on-surface-variant)" font-family="Plus Jakarta Sans, sans-serif" font-size="11">"Package this chat as a skill"</text>
+          <line x1="322" y1="114" x2="536" y2="114" stroke="var(--outline-variant)" stroke-width="1"/>
+          <text x="322" y="136" fill="var(--on-surface)" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="600">External Connectors (MCP)</text>
+          <text x="322" y="154" fill="var(--on-surface-variant)" font-family="Plus Jakarta Sans, sans-serif" font-size="11">Gmail, Drive, Asana, Granola, Context7</text>
+          <line x1="322" y1="168" x2="536" y2="168" stroke="var(--outline-variant)" stroke-width="1"/>
+          <text x="322" y="190" fill="var(--tertiary)" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="600">Security Check First</text>
+          <text x="322" y="208" fill="var(--on-surface-variant)" font-family="Plus Jakarta Sans, sans-serif" font-size="11">Inspect GitHub skills via Skill Inspector</text>
+
+          <!-- Connector Arrow 2 -->
+          <line x1="556" y1="124" x2="604" y2="124" stroke="var(--outline)" stroke-width="2"/>
+          <polygon points="604,119 614,124 604,129" fill="var(--outline)"/>
+
+          <!-- Column 3: Execution Surfaces -->
+          <rect x="618" y="24" width="230" height="200" rx="6" fill="var(--surface-container)" stroke="var(--outline-variant)" stroke-width="1.5"/>
+          <rect x="618" y="24" width="230" height="32" rx="4" fill="var(--positive)"/>
+          <text x="632" y="45" fill="var(--on-secondary)" font-family="Geist Mono, monospace" font-size="11" font-weight="600">03 · EXECUTION SURFACES</text>
+          <text x="632" y="82" fill="var(--on-surface)" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="600">Chat / Gems</text>
+          <text x="632" y="100" fill="var(--on-surface-variant)" font-family="Plus Jakarta Sans, sans-serif" font-size="11">Thinking partner &amp; first drafts</text>
+          <line x1="632" y1="114" x2="832" y2="114" stroke="var(--outline-variant)" stroke-width="1"/>
+          <text x="632" y="136" fill="var(--on-surface)" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="600">Cowork / ChatGPT Work</text>
+          <text x="632" y="154" fill="var(--on-surface-variant)" font-family="Plus Jakarta Sans, sans-serif" font-size="11">Local files, browser &amp; schedules</text>
+          <line x1="632" y1="168" x2="832" y2="168" stroke="var(--outline-variant)" stroke-width="1"/>
+          <text x="632" y="190" fill="var(--on-surface)" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="600">Code / Codex / Antigravity</text>
+          <text x="632" y="208" fill="var(--on-surface-variant)" font-family="Plus Jakarta Sans, sans-serif" font-size="11">Full apps, extensions &amp; deploys</text>
+        </svg>
+      </div>
+
+      <!-- Filterable Skill & Connector Directory -->
+      <div class="mt-xl">
+        <div class="row-end" style="justify-content: space-between;">
+          <div>
+            <span class="figure-label">Curated Field Directory</span>
+            <h3 class="subhead mt-xs">Free Agent Skills &amp; High-Leverage Connectors</h3>
+          </div>
+          <div class="pill-group" role="group" aria-label="Filter skills by category">
+            <button type="button" class="choice-pill" onclick="filterSkills('all', this)" aria-pressed="true">All (10)</button>
+            <button type="button" class="choice-pill" onclick="filterSkills('research', this)" aria-pressed="false">Research &amp; Writing</button>
+            <button type="button" class="choice-pill" onclick="filterSkills('design', this)" aria-pressed="false">Design &amp; Video</button>
+            <button type="button" class="choice-pill" onclick="filterSkills('dev', this)" aria-pressed="false">Dev &amp; Safety</button>
+          </div>
+        </div>
+
+        <div class="card-grid mt-md" id="skills-directory-grid">
+          <!-- Populated dynamically from backtick-escaped source data -->
+        </div>
+      </div>
+
+      <details class="dossier-details mt-lg">
+        <summary>How to build your own skill—and stay safe with external GitHub repos</summary>
+        <div class="equal-two-grid mt-md">
+          <div>
+            <p class="prose-muted">
+              <strong>The Capture Loop:</strong> Work through a real task in chat until the output matches your exact taste. Then ask: <em>"Package everything we just did into a skill."</em> Claude or ChatGPT distills the rules, format, and edge cases into a reusable file. You can also extend third-party skills (for example, turning <code>last-30-days</code> output into an interactive briefing site).
+            </p>
+          </div>
+          <div>
+            <p class="prose-muted">
+              <strong>Security Hygiene:</strong> Because skills inside Cowork, Work, or Code can execute scripts and access local folders or API keys, always inspect external skills before trusting them. Run Nvidia's <strong>Skill Inspector</strong> scanner first, read the underlying Markdown instructions, and never grant blind permissions to unverified repos.
+            </p>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- SECTION 04: DESIGN & VIBE CODING -->
+    <section id="sec-building" class="reveal">
+      <div class="dossier-bar">
+        <div class="dossier-bar-left">
+          <span class="dossier-pill">04 · DESIGN &amp; VIBE CODING</span>
+          <span class="dossier-meta">ANTI-SLOP SYSTEM · INTERNAL TOOLS TO DEPLOYED APPS</span>
+        </div>
+        <span class="dossier-meta">WORKFLOW PLAYBOOK</span>
+      </div>
+
+      <h2 class="section-title">Never accept the first generic layout—separate visual exploration from backend plumbing</h2>
+      <p class="prose">
+        Vibe coding lets non-technical builders describe software in plain English and let the AI write, test, and debug every file. The trap is asking for a finished site in one vague prompt, which produces identical "AI slop" templates. Instead, use a structured six-step visual system first, then pick the right build surface for what you are shipping.
+      </p>
+
+      <!-- 6-Step Anti-Slop Design System -->
+      <div class="two-col-grid mt-lg">
+        <div>
+          <span class="figure-label">The 6-Step Anti-Slop Design System</span>
+          <div class="step-list mt-sm">
+            <div class="step-item">
+              <span class="step-badge">01</span>
+              <div>
+                <strong>Reference (Build a Taste Board)</strong>
+                <p class="prose-muted mt-xs">Collect 2–5 screenshots from galleries like Lapa Ninja, Refero, or Mobbin, plus product assets. Tell the AI explicitly what to borrow from each (typography from A, layout from B).</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <span class="step-badge">02</span>
+              <div>
+                <strong>Explore (Force Divergent Options)</strong>
+                <p class="prose-muted mt-xs">Prompt for 6 meaningfully different homepage compositions—never 6 color swaps of one layout.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <span class="step-badge">03</span>
+              <div>
+                <strong>Synthesize (Merge Favorites)</strong>
+                <p class="prose-muted mt-xs">Pin inline comments onto the best nav, typography, and hero elements across directions and ask the AI to fuse them into one build.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <span class="step-badge">04</span>
+              <div>
+                <strong>Explode (Tweaks &amp; Micro-Interactions)</strong>
+                <p class="prose-muted mt-xs">Use Claude Design / Artifacts <em>Tweaks</em> (or Impeccable commands like <code>bolder</code> and <code>delight</code>) to toggle navbars, cards, and subtle hover states in seconds.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <span class="step-badge">05</span>
+              <div>
+                <strong>Expand (Lock a Design System)</strong>
+                <p class="prose-muted mt-xs">Once the hero feels right, lock the rules into a reusable Design System so sub-pages, slide decks, and motion graphics share one visual voice.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <span class="step-badge">06</span>
+              <div>
+                <strong>Build &amp; Deploy (Code Handoff)</strong>
+                <p class="prose-muted mt-xs">Export the ZIP into Claude Code or Codex in <strong>Plan Mode</strong> to wire databases, auth, Stripe, GitHub version control, and Vercel hosting.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Interactive Vibe-Coding Path Selector -->
+        <div class="figure-card card-wrapper">
+          <div class="dossier-bar-left mb-sm">
+            <span class="index-num">C1</span>
+            <span class="tag">Decision Tool</span>
+          </div>
+          <h3 class="subhead">Choose Your Vibe-Coding Path</h3>
+          <p class="prose-muted">Select what you are trying to ship to see the fastest grounded stack from the transcripts.</p>
+
+          <div class="pill-group mt-md" role="group" aria-label="Vibe coding goal">
+            <button type="button" class="choice-pill" onclick="selectBuildPath('internal', this)" aria-pressed="true">Internal Tool</button>
+            <button type="button" class="choice-pill" onclick="selectBuildPath('hosted-site', this)" aria-pressed="false">Shareable Web Tool</button>
+            <button type="button" class="choice-pill" onclick="selectBuildPath('motion', this)" aria-pressed="false">Motion Graphics</button>
+            <button type="button" class="choice-pill" onclick="selectBuildPath('saas', this)" aria-pressed="false">Full Production App</button>
+          </div>
+
+          <div class="aside-box mt-md" id="build-path-result" aria-live="polite">
+            <!-- Populated dynamically -->
+          </div>
+
+          <div class="mt-lg">
+            <span class="figure-label">Essential Claude Code / Codex Habits</span>
+            <ul style="margin: var(--space-sm) 0 0; padding-left: var(--space-lg); display: grid; gap: var(--space-xs); font-size: 0.9375rem;">
+              <li>Always start new builds in <strong>Plan Mode</strong> before editing files.</li>
+              <li>Use <strong>Opus</strong> to plan &amp; build v1; switch to <strong>Sonnet</strong> for cheaper edits.</li>
+              <li>Run <code>/init</code> to create <code>CLAUDE.md</code> or <code>AGENTS.md</code> project memory.</li>
+              <li>Debug with screenshots—drop visual bugs straight into the chat.</li>
+              <li>Start a fresh session with a handoff summary when context fills up.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Platform Matrix Table -->
+      <div class="table-wrap mt-xl">
+        <table class="dossier-table">
+          <thead>
+            <tr>
+              <th>Platform</th>
+              <th>Best Use Case</th>
+              <th>Key Advantage</th>
+              <th>Hosting / Cost Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Artifacts / Canvas</strong></td>
+              <td>Dashboards, calculators, prototypes</td>
+              <td>Zero setup inside chat; shareable link</td>
+              <td>Included in Claude / ChatGPT / Gemini</td>
+            </tr>
+            <tr>
+              <td><strong>Google AI Studio</strong><br><span class="inline-meta">aistudio.google.com</span></td>
+              <td>Rapid internal tools (e.g., comment analyzer)</td>
+              <td>Native Maps, video, voice &amp; Gemini APIs</td>
+              <td>Free to build; $300 free GCP credits to deploy</td>
+            </tr>
+            <tr>
+              <td><strong>Google Stitch</strong></td>
+              <td>Prompt or screenshot → Figma-style UI</td>
+              <td>Multi-theme canvas; 1-click export to AI Studio</td>
+              <td>Free in Google Labs</td>
+            </tr>
+            <tr>
+              <td><strong>ChatGPT Work Sites</strong><br><span class="inline-meta">@sites · chatgpt.site</span></td>
+              <td>Living dashboards, trip hubs, skill front-ends</td>
+              <td>Built-in storage, auth, analytics &amp; schedules</td>
+              <td>Hosted automatically on ChatGPT paid plans</td>
+            </tr>
+            <tr>
+              <td><strong>Claude Code / Codex</strong></td>
+              <td>Complex web apps, Chrome extensions, plugins</td>
+              <td>Full local file control, MCPs, self-testing</td>
+              <td>Deploy free via GitHub + Vercel</td>
+            </tr>
+            <tr>
+              <td><strong>Emergent AI</strong></td>
+              <td>Production SaaS with auth &amp; payments</td>
+              <td>Multi-agent debugging &amp; universal LLM keys</td>
+              <td>Built-in Stripe &amp; 1-click domain hosting</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 05: DELEGATION & THE 10% SPECIALIZED STACK -->
+    <section id="sec-agents" class="reveal">
+      <div class="dossier-bar">
+        <div class="dossier-bar-left">
+          <span class="dossier-pill">05 · DELEGATION &amp; EDGE STACK</span>
+          <span class="dossier-meta">CHAT VS. COWORK VS. CODE · THE SPECIALIZED 10%</span>
+        </div>
+        <span class="dossier-meta">BEYOND CHATBOTS</span>
+      </div>
+
+      <h2 class="section-title">Know when to think, when to delegate, and when to bring in a specialist tool</h2>
+      <p class="prose">
+        If you catch yourself copying Chat's output into folders, stitching documents together, or doing busywork around an answer, you are in the wrong mode. Switch from conversational <strong>Chat</strong> (where work happens turn by turn) to <strong>Cowork / ChatGPT Work</strong> (where you assign a finish line, connect tools, and step away while the agent checks off its own checklist).
+      </p>
+
+      <div class="card-grid mt-lg">
+        <article class="figure-card">
+          <span class="tag slate">Chat Mode</span>
+          <h3 class="subhead mt-sm">Think Together</h3>
+          <p class="prose-muted">Use when the conversation <em>is</em> the work: brainstorming angles, weighing pricing tradeoffs, or dissecting a contract clause turn by turn.</p>
+        </article>
+        <article class="figure-card">
+          <span class="tag">Cowork / Work Mode</span>
+          <h3 class="subhead mt-sm">Delegate Outcomes</h3>
+          <p class="prose-muted">Point at a local folder or cloud drive, tag tools like Gmail or Granola, and assign an outcome—file cleanup, slide decks, scheduled morning updates.</p>
+        </article>
+        <article class="figure-card">
+          <span class="tag positive">Code / Codex Mode</span>
+          <h3 class="subhead mt-sm">Build Software</h3>
+          <p class="prose-muted">Assign a dedicated project folder, enter Plan Mode, and use <code>/goal</code> so the agent writes, tests in browser, debugs, and ships until verification passes.</p>
+        </article>
+      </div>
+
+      <h3 class="subhead mt-xl mb-sm">The Specialized 10% Stack Worth Keeping Outside Your Main Ecosystem</h3>
+      <div class="card-grid mt-md">
+        <article class="figure-card">
+          <div class="dossier-bar-left mb-sm">
+            <span class="index-num">S1</span>
+            <span class="tag positive">Research &amp; Retention</span>
+          </div>
+          <h4 class="subhead">NotebookLM</h4>
+          <p class="prose-muted">Ground answers strictly in your own PDFs, videos, and papers with clickable inline citations. Generates interactive audio podcasts, quizzes, flashcards, mind maps, and infographics—and connects straight into Gemini Gems as a live knowledge base.</p>
+        </article>
+
+        <article class="figure-card">
+          <div class="dossier-bar-left mb-sm">
+            <span class="index-num">S2</span>
+            <span class="tag">Google Labs Duo</span>
+          </div>
+          <h4 class="subhead">Opal &amp; Pomelli</h4>
+          <p class="prose-muted"><strong>Opal</strong> builds prompted, visual node workflows (like a no-code n8n). <strong>Pomelli</strong> extracts a site's Business DNA (fonts, palette, tone, assets, JSON) from one URL and generates editable, animated social campaigns.</p>
+        </article>
+
+        <article class="figure-card">
+          <div class="dossier-bar-left mb-sm">
+            <span class="index-num">S3</span>
+            <span class="tag">Creative Media</span>
+          </div>
+          <h4 class="subhead">Higgsfield &amp; Suno</h4>
+          <p class="prose-muted"><strong>Higgsfield</strong> puts top image and video models (GPT Image 2, Nano Banana Pro, and leading video engines) in one batch workspace. <strong>Suno</strong> covers studio-grade music generation when sound is needed.</p>
+        </article>
+
+        <article class="figure-card">
+          <div class="dossier-bar-left mb-sm">
+            <span class="index-num">S4</span>
+            <span class="tag slate">Capture &amp; Voice</span>
+          </div>
+          <h4 class="subhead">Granola &amp; Whisper Flow</h4>
+          <p class="prose-muted"><strong>Granola</strong> captures clean meeting notes without injecting an intrusive bot into calls and feeds directly into Claude or ChatGPT Work via MCP. <strong>Whisper Flow</strong> turns spoken thoughts into polished text that self-corrects misspeaks.</p>
+        </article>
+
+        <article class="figure-card">
+          <div class="dossier-bar-left mb-sm">
+            <span class="index-num">S5</span>
+            <span class="tag">Deep Automation</span>
+          </div>
+          <h4 class="subhead">n8n, Zapier Agents &amp; OpenClaw</h4>
+          <p class="prose-muted">When workflows need deterministic triggers, HTTP nodes, or 24/7 messaging-app control, step up to Zapier Agents or n8n. Always isolate high-access agents like OpenClaw on a dedicated VPS (such as Hostinger) rather than your primary machine.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- SECTION 06: PERSISTENT IMPLEMENTATION CHECKLIST -->
+    <section id="sec-checklist" class="reveal">
+      <div class="dossier-bar">
+        <div class="dossier-bar-left">
+          <span class="dossier-pill">06 · ACTION PLAN</span>
+          <span class="dossier-meta">SAVED AUTOMATICALLY TO YOUR SESSION</span>
+        </div>
+        <span class="dossier-meta" id="checklist-percent-label">0% COMPLETE</span>
+      </div>
+
+      <h2 class="section-title">Implementation beats another tutorial</h2>
+      <p class="prose">
+        Pick one real bottleneck today. Check off each milestone below as you build your system—your progress and customized prompt settings save automatically across visits.
+      </p>
+
+      <div class="figure-card mt-md">
+        <div class="row-end" style="justify-content: space-between;">
+          <div>
+            <span class="figure-label">7-Step AI Mastery Rollout</span>
+            <h3 class="subhead mt-xs" id="checklist-summary-heading">0 of 7 milestones completed</h3>
+          </div>
+          <div class="pill-group">
+            <button type="button" class="btn btn-secondary" onclick="exportActionPlan()">
+              <i data-lucide="download" class="icon-sm" aria-hidden="true"></i>
+              Export Plan (.txt)
+            </button>
+            <button type="button" class="btn btn-secondary" id="reset-checklist-btn" onclick="handleResetChecklist(this)">
+              Reset Progress
+            </button>
+          </div>
+        </div>
+
+        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="checklist-progress-bar">
+          <div class="progress-fill" id="checklist-progress-fill"></div>
+        </div>
+        <div class="status-note mb-md" id="checklist-status-msg" aria-live="polite"></div>
+
+        <div class="step-list" id="checklist-container">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- SOURCES FOOTER -->
+    <footer class="aside-box">
+      <span class="figure-label">Sources &amp; Grounding</span>
+      <p class="prose-muted mt-xs" style="margin-bottom: 0;">
+        Synthesized from 17 Futurepedia 2026 video guides covering AI ecosystem strategy, ChatGPT Work &amp; Sites, GPT Image 2.5, Codex, Claude 2.0 (Chat, Cowork, Code, Design &amp; Artifacts), Claude Skills, Google's hidden AI suite (AI Studio, Opal, Pomelli, Stitch, NotebookLM), Emergent AI vibe coding, and no-code AI agent architecture.
+      </p>
+    </footer>
+
+  </main>
+
+  <api-shim></api-shim>
+  <script>
+    // =========================================================================
+    // DATA DEFINITIONS (Backtick template literals for safe string escaping)
+    // =========================================================================
+    const ECOSYSTEM_RESULTS = {
+      'writing-building': {
+        'local-control': {
+          name: `Claude (Anthropic)`,
+          why: `Strongest fit for nuanced writing, editorial hooks, and desktop vibe coding. Use Claude Projects for persistent context, Design/Artifacts for visual tweaks, and Claude Code in Plan Mode for full local software builds.`
+        },
+        'instant-cloud': {
+          name: `Claude + GitHub/Vercel Handoff`,
+          why: `Explore 6 visual directions inside Claude Artifacts (Design), then export the ZIP to Claude Code to push to GitHub and deploy live on Vercel in minutes—or enable Remote Control to steer sessions from your phone.`
+        },
+        'free-labs': {
+          name: `Claude Pro + Google Labs Assist`,
+          why: `Run core writing, Projects, and Skills inside Claude, while tapping Google's free AI Studio ($300 GCP deploy credits) or Stitch for rapid standalone prototypes without burning Claude token caps.`
+        }
+      },
+      'all-in-one': {
+        'local-control': {
+          name: `ChatGPT Desktop (Work + Codex)`,
+          why: `ChatGPT Work on desktop organizes local folders, runs scheduled 6:00 a.m. automations, and uses an in-app browser—while Codex handles heavy coding with higher usage caps than Claude Pro.`
+        },
+        'instant-cloud': {
+          name: `ChatGPT Work & Sites`,
+          why: `Tag @sites inside ChatGPT Work to turn messy chats, spreadsheets, or skills into hosted live web apps (chatgpt.site) with persistent storage, auth, and analytics—plus GPT Image 2.5 (Flare & Sunburst) for visuals.`
+        },
+        'free-labs': {
+          name: `ChatGPT + Codex Free Plan`,
+          why: `You can start testing Codex even on ChatGPT's free tier, and combine GPT Image 2.5 or Work Blocks with Google's free Labs tools (Stitch, Opal) for specialized node workflows.`
+        }
+      },
+      'google-research': {
+        'local-control': {
+          name: `Gemini + NotebookLM + Antigravity`,
+          why: `Use NotebookLM as your citation-locked research brain, link notebooks directly into Gemini Gems, and step into Antigravity or Google AI Studio when you need custom app code.`
+        },
+        'instant-cloud': {
+          name: `Gemini Workspace + Google AI Studio`,
+          why: `Unmatched if you live in Gmail, Calendar, and Drive (with Gemini in the side panel) and analyze YouTube links natively. Deploy internal dashboards from AI Studio using $300 in free Google Cloud credits.`
+        },
+        'free-labs': {
+          name: `Google Labs & NotebookLM Stack`,
+          why: `Almost the entire Google creative & automation stack is free to start: NotebookLM for source-grounded study, Opal for prompted node workflows, Pomelli for Business DNA campaigns, and Stitch for UI prototyping.`
+        }
+      }
+    };
+
+    const PROMPT_PRESETS = {
+      'launch': {
+        instructions: `Build a 30-day go-to-market launch plan for a new B2B productivity app`,
+        context: `Solo founder launching to non-technical operations managers. Budget is under $1,500; existing distribution is a 4,000-subscriber newsletter.`,
+        constraints: `Direct, zero fluff. Output as a week-by-week markdown table with owner, channel, and measurable KPI.`
+      },
+      'dashboard': {
+        instructions: `Build a dashboard for analyzing YouTube comments from a video URL`,
+        context: `Creator with 3M+ views who cannot manually read thousands of comments and needs to spot viewer frustrations before scripting the next video.`,
+        constraints: `Display overall sentiment score, top 5 viewer questions, and top critical feedback with brief explanations.`
+      },
+      'strategy': {
+        instructions: `Audit my daily workday subtasks and identify the highest-ROI candidates for automation or an internal tool`,
+        context: `I spend 3 hours each morning triaging client emails, pulling meeting notes from Granola, and updating an Asana board manually.`,
+        constraints: `Rank opportunities by time saved per week vs. setup difficulty. Distinguish between a simple Skill, a Cowork/Work scheduled task, and a custom app.`
+      }
+    };
+
+    const SKILLS_DATA = [
+      {
+        name: `last-30-days`,
+        category: `research`,
+        catLabel: `Research & Writing`,
+        desc: `Scans live Reddit threads, YouTube transcripts, Hacker News, GitHub, and Polymarket—scoring and distilling what real users are saying right now into a compact report.`
+      },
+      {
+        name: `humanizer`,
+        category: `research`,
+        catLabel: `Research & Writing`,
+        desc: `Strips obvious AI writing tells ("not X, it's Y" setups, cliché sign-offs, robotic cadence) from tweets, scripts, and essays—and explains every edit.`
+      },
+      {
+        name: `claude-video`,
+        category: `research`,
+        catLabel: `Research & Writing`,
+        desc: `Lets Claude Code or Codex inspect local videos or social links (falling back to audio transcription via API when captions are missing) to extract on-screen steps and instructions.`
+      },
+      {
+        name: `remotion & hyperframes`,
+        category: `design`,
+        catLabel: `Design & Video`,
+        desc: `Teaches your agent to code motion graphics, data visualizations, and map animations—Remotion via React (great for UI graphics) and Hyperframes via HTML/web animations (smooth camera pans).`
+      },
+      {
+        name: `impeccable`,
+        category: `design`,
+        catLabel: `Design & Video`,
+        desc: `Anti-AI-design-slop toolkit with 24 focused commands—including "bolder" to amplify bland layouts, "delight" for micro-interactions, and "critique" for full UX/mobile reviews.`
+      },
+      {
+        name: `plain-js motion`,
+        category: `design`,
+        catLabel: `Design & Video`,
+        desc: `Frame-by-frame browser JavaScript animations synced directly to timestamped voiceover transcripts from Gemini—zero external video generator required.`
+      },
+      {
+        name: `superpowers`,
+        category: `dev`,
+        catLabel: `Dev & Safety`,
+        desc: `A full engineering playbook plugin that your agent calls automatically for brainstorming, architecture plans, sub-agent delegation, testing, and systematic debugging.`
+      },
+      {
+        name: `gstack`,
+        category: `dev`,
+        catLabel: `Dev & Safety`,
+        desc: `Maintained by Y Combinator CEO Gary Tan—bundles specialized skills to challenge product ideas, review technical plans, test in browsers, and ship releases.`
+      },
+      {
+        name: `Skill Inspector (Nvidia)`,
+        category: `dev`,
+        catLabel: `Dev & Safety`,
+        desc: `Security scanner you run before installing external GitHub skills to flag hidden scripts, unexpected tool calls, or API-key exposure risks.`
+      },
+      {
+        name: `Context7 & Granola MCPs`,
+        category: `dev`,
+        catLabel: `Dev & Safety`,
+        desc: `Context7 pulls live framework docs (React, Tailwind, Vercel) to stop code hallucinations; Granola pipes bot-free meeting notes straight into Claude or ChatGPT Work.`
+      }
+    ];
+
+    const BUILD_PATHS = {
+      'internal': {
+        title: `Google AI Studio or Artifacts / Canvas`,
+        badge: `Fastest · $0 to Start`,
+        summary: `Best for personal time-savers (YouTube comment sentiment dashboards, tier-list video rankers, prompt autofill libraries) where perfection matters less than saving 30 minutes today.`,
+        steps: [
+          `Describe the tool in 2–3 sentences at aistudio.google.com (Build tab) or inside Claude Artifacts / ChatGPT Canvas.`,
+          `Iterate feature by feature in plain English—swap icons, add autofill variables, or paste screenshots of layout bugs.`,
+          `Keep it private inside the studio, or deploy via Google Cloud ($300 free credits cover personal internal apps).`
+        ]
+      },
+      'hosted-site': {
+        title: `ChatGPT Work @sites or Google Stitch → AI Studio`,
+        badge: `Instant Live URL`,
+        summary: `Ideal when you want a living, shareable web app (trip command centers, client calculators, or front-ends for skills) without configuring hosting.`,
+        steps: [
+          `In ChatGPT Work, tag @sites and reference your existing chat, spreadsheet, or skill as the source of truth.`,
+          `Pick from generated layout mockups and publish to a custom chatgpt.site URL with built-in auth, file storage, and visitor analytics.`,
+          `Alternatively, sketch UI directions in Google Stitch from a screenshot and click "Build with AI Studio" to make it functional.`
+        ]
+      },
+      'motion': {
+        title: `Claude Artifacts (Motion) or Remotion / Hyperframes`,
+        badge: `Transcript-Synced Video`,
+        summary: `Code-generated motion graphics let you tweak exact timestamps, positions, and brand colors in seconds—far more controllable than text-to-video models for explainers.`,
+        steps: [
+          `Drop your raw video into Gemini to extract an exact timestamped transcript.`,
+          `Select a brand Design System inside Claude (or install the Remotion / Hyperframes skill in Code or Work).`,
+          `Paste the transcript, specify space for a talking head if needed, iterate via screenshots, and export MP4.`
+        ]
+      },
+      'saas': {
+        title: `Claude Design → Claude Code (or Emergent AI)`,
+        badge: `Production Stack`,
+        summary: `When you need real user logins, a persistent database, and Stripe payments, pair visual taste exploration with an agentic coding environment.`,
+        steps: [
+          `Run the 6-Step Design System inside Claude Artifacts (Design) to lock typography, micro-interactions, and multi-page consistency.`,
+          `Export the ZIP into Claude Code (or Codex), run /init for CLAUDE.md, and build backend/auth/Stripe in Plan Mode using Opus → Sonnet.`,
+          `Push to GitHub and deploy free on Vercel—or build end-to-end with Emergent AI's universal LLM keys and built-in Stripe.`
+        ]
+      }
+    };
+
+    const CHECKLIST_STEPS = [
+      {
+        id: `pick-eco`,
+        title: `Commit to one primary ecosystem for 60 days`,
+        detail: `Choose ChatGPT, Claude, or Gemini based on where your core work lives so memory and skills actually compound.`
+      },
+      {
+        id: `context-interview`,
+        title: `Run one deep Context Interview and save it to a Project`,
+        detail: `Let the AI interview you about your business, audience, and constraints, then save the synthesized doc into Project Knowledge.`
+      },
+      {
+        id: `audit-day`,
+        title: `Break one workday into subtasks and rank automation targets`,
+        detail: `List every repetitive micro-task and ask your AI which ones belong as a Skill, a scheduled Work/Cowork task, or a small built tool.`
+      },
+      {
+        id: `package-skill`,
+        title: `Package one refined chat workflow into a reusable Skill`,
+        detail: `Take a conversation where you already iterated to a great result and say: "Package everything we just did into a skill."`
+      },
+      {
+        id: `verify-safety`,
+        title: `Inspect before installing any third-party skill or MCP`,
+        detail: `Read the Markdown instructions or run Nvidia's Skill Inspector before granting file-system or API access.`
+      },
+      {
+        id: `vibe-build`,
+        title: `Build one small internal tool in Plan Mode`,
+        detail: `Use Artifacts, Google AI Studio, Work @sites, or Claude Code to replace one messy spreadsheet or manual checklist.`
+      },
+      {
+        id: `notebook-ground`,
+        title: `Ground a high-stakes topic in NotebookLM`,
+        detail: `Upload real PDFs, papers, or YouTube links so every answer carries verifiable citations—and optionally link it to a Gemini Gem.`
+      }
+    ];
+
+    // =========================================================================
+    // PERSISTENT APP STATE
+    // =========================================================================
+    let appState = {
+      ecoGoal: `writing-building`,
+      ecoStyle: `local-control`,
+      pbInstructions: `Build a 30-day go-to-market launch plan for a new B2B productivity app`,
+      pbContext: `Solo founder launching to non-technical operations managers. Budget is under $1,500; existing distribution is a 4,000-subscriber newsletter.`,
+      pbConstraints: `Direct, zero fluff. Output as a week-by-week markdown table with owner, channel, and measurable KPI.`,
+      pbInterview: true,
+      pbAnchor: true,
+      pbGuards: false,
+      skillFilter: `all`,
+      buildPath: `internal`,
+      completedSteps: []
+    };
+
+    async function saveState() {
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === 'function') {
+          await window.notebookAppApi.setAppState(appState);
+        }
+      } catch (err) {
+        // Silent fallback in non-host environments
+      }
+    }
+
+    async function loadState() {
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === 'function') {
+          const saved = await window.notebookAppApi.getAppState();
+          if (saved && typeof saved === 'object') {
+            appState = Object.assign({}, appState, saved);
+            if (!Array.isArray(appState.completedSteps)) {
+              appState.completedSteps = [];
+            }
+          }
+        }
+      } catch (err) {
+        // Use defaults
+      }
+    }
+
+    // =========================================================================
+    // SECTION 01: ECOSYSTEM FINDER
+    // =========================================================================
+    function updateEcosystemFinder() {
+      const goalEl = document.getElementById('eco-goal-select');
+      const styleEl = document.getElementById('eco-style-select');
+      const boxEl = document.getElementById('eco-recommendation-box');
+      const badgeEl = document.getElementById('eco-match-badge');
+      if (!goalEl || !styleEl || !boxEl) return;
+
+      appState.ecoGoal = goalEl.value;
+      appState.ecoStyle = styleEl.value;
+
+      const goalGroup = ECOSYSTEM_RESULTS[appState.ecoGoal] || ECOSYSTEM_RESULTS['writing-building'];
+      const match = goalGroup[appState.ecoStyle] || goalGroup['local-control'];
+
+      if (badgeEl) {
+        badgeEl.textContent = `BEST FIT: ${match.name.toUpperCase()}`;
+      }
+
+      boxEl.innerHTML = `
+        <span class="figure-label">Recommended Primary Stack</span>
+        <h4 class="subhead mt-xs">${match.name}</h4>
+        <p class="prose" style="margin-bottom: 0;">${match.why}</p>
+      `;
+
+      // Highlight matching card visually
+      const cards = {
+        claude: document.getElementById('eco-card-claude'),
+        chatgpt: document.getElementById('eco-card-chatgpt'),
+        gemini: document.getElementById('eco-card-gemini')
+      };
+      Object.values(cards).forEach(function (card) {
+        if (card) card.classList.remove('highlighted');
+      });
+      const lower = match.name.toLowerCase();
+      if (lower.includes('claude') && cards.claude) cards.claude.classList.add('highlighted');
+      if (lower.includes('chatgpt') && cards.chatgpt) cards.chatgpt.classList.add('highlighted');
+      if ((lower.includes('gemini') || lower.includes('google')) && cards.gemini) cards.gemini.classList.add('highlighted');
+
+      saveState();
+    }
+
+    // =========================================================================
+    // SECTION 02: ICC PROMPT BUILDER
+    // =========================================================================
+    function applyPromptPreset(presetKey) {
+      const preset = PROMPT_PRESETS[presetKey];
+      if (!preset) return;
+      const instEl = document.getElementById('pb-instructions');
+      const ctxEl = document.getElementById('pb-context');
+      const conEl = document.getElementById('pb-constraints');
+      if (instEl) instEl.value = preset.instructions;
+      if (ctxEl) ctxEl.value = preset.context;
+      if (conEl) conEl.value = preset.constraints;
+
+      const pills = document.querySelectorAll('#sec-prompting .choice-pill');
+      pills.forEach(function (btn) {
+        const matches = btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(presetKey);
+        btn.setAttribute('aria-pressed', matches ? 'true' : 'false');
+      });
+
+      renderPromptBuilder();
+    }
+
+    function renderPromptBuilder() {
+      const instEl = document.getElementById('pb-instructions');
+      const ctxEl = document.getElementById('pb-context');
+      const conEl = document.getElementById('pb-constraints');
+      const intEl = document.getElementById('pb-interview');
+      const ancEl = document.getElementById('pb-anchor');
+      const grdEl = document.getElementById('pb-guards');
+      const outEl = document.getElementById('pb-output-text');
+      if (!instEl || !ctxEl || !conEl || !outEl) return;
+
+      appState.pbInstructions = instEl.value.trim();
+      appState.pbContext = ctxEl.value.trim();
+      appState.pbConstraints = conEl.value.trim();
+      appState.pbInterview = intEl ? intEl.checked : true;
+      appState.pbAnchor = ancEl ? ancEl.checked : true;
+      appState.pbGuards = grdEl ? grdEl.checked : false;
+
+      const parts = [];
+      parts.push(`INSTRUCTIONS:\n${appState.pbInstructions || `[Describe the exact task and deliverable]`}`);
+      parts.push(`CONTEXT:\n${appState.pbContext || `[Share your role, audience, resources, and background]`}`);
+      parts.push(`CONSTRAINTS:\n${appState.pbConstraints || `[Specify tone, length, format, and output rules]`}`);
+
+      if (appState.pbAnchor) {
+        parts.push(`GROUNDING (EXPERT ANCHOR):\nFirst identify the 2-3 most respected practitioners and named operating frameworks for this domain. Anchor your reasoning strictly in those proven mechanisms rather than generic advice.`);
+      }
+      if (appState.pbGuards) {
+        parts.push(`VERIFICATION GUARDS:\n1. Label each major claim with a confidence level (High / Medium / Uncertain).\n2. Cite verifiable sources where relevant.\n3. Include one credible counter-argument or failure mode to watch for.`);
+      }
+      if (appState.pbInterview) {
+        parts.push(`CONTEXT INTERVIEW:\nBefore generating the final output, ask me up to 5 targeted clarifying questions to uncover missing context or edge cases. Wait for my answers first.`);
+      }
+
+      outEl.textContent = parts.join(`\n\n`);
+      saveState();
+    }
+
+    function copyGeneratedPrompt() {
+      const outEl = document.getElementById('pb-output-text');
+      const statusEl = document.getElementById('pb-copy-status');
+      if (!outEl || !statusEl) return;
+
+      const text = outEl.textContent || ``;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+          statusEl.classList.remove('error');
+          statusEl.textContent = `Copied prompt to clipboard.`;
+        }).catch(function () {
+          fallbackCopy(text, statusEl);
+        });
+      } else {
+        fallbackCopy(text, statusEl);
+      }
+    }
+
+    function fallbackCopy(text, statusEl) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        if (ok) {
+          statusEl.classList.remove('error');
+          statusEl.textContent = `Copied prompt to clipboard.`;
+        } else {
+          statusEl.classList.add('error');
+          statusEl.textContent = `Select the preview text above and press Ctrl+C / Cmd+C.`;
+        }
+      } catch (e) {
+        statusEl.classList.add('error');
+        statusEl.textContent = `Select the preview text above and press Ctrl+C / Cmd+C.`;
+      }
+    }
+
+    // =========================================================================
+    // SECTION 03: SKILLS DIRECTORY
+    // =========================================================================
+    function filterSkills(category, btnEl) {
+      appState.skillFilter = category;
+      const buttons = document.querySelectorAll('#sec-skills .choice-pill');
+      buttons.forEach(function (btn) {
+        btn.setAttribute('aria-pressed', btn === btnEl ? 'true' : 'false');
+      });
+      renderSkillsGrid();
+      saveState();
+    }
+
+    function renderSkillsGrid() {
+      const gridEl = document.getElementById('skills-directory-grid');
+      if (!gridEl) return;
+      const active = appState.skillFilter || `all`;
+      const filtered = SKILLS_DATA.filter(function (item) {
+        return active === `all` || item.category === active;
+      });
+
+      gridEl.innerHTML = filtered.map(function (skill, idx) {
+        const num = String(idx + 1).padStart(2, `0`);
+        const tagClass = skill.category === `dev` ? `tag positive` : (skill.category === `research` ? `tag slate` : `tag`);
+        return `
+          <article class="figure-card">
+            <div class="dossier-bar-left mb-sm">
+              <span class="index-num">${num}</span>
+              <span class="${tagClass}">${skill.catLabel}</span>
+            </div>
+            <h4 class="subhead">${skill.name}</h4>
+            <p class="prose-muted" style="margin-bottom: 0;">${skill.desc}</p>
+          </article>
+        `;
+      }).join(``);
+    }
+
+    // =========================================================================
+    // SECTION 04: VIBE-CODING BUILD PATH SELECTOR
+    // =========================================================================
+    function selectBuildPath(pathKey, btnEl) {
+      appState.buildPath = pathKey;
+      const buttons = document.querySelectorAll('#sec-building .choice-pill');
+      buttons.forEach(function (btn) {
+        if (btnEl) {
+          btn.setAttribute('aria-pressed', btn === btnEl ? 'true' : 'false');
+        } else {
+          const match = btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(pathKey);
+          btn.setAttribute('aria-pressed', match ? 'true' : 'false');
+        }
+      });
+      renderBuildPath();
+      saveState();
+    }
+
+    function renderBuildPath() {
+      const box = document.getElementById('build-path-result');
+      if (!box) return;
+      const data = BUILD_PATHS[appState.buildPath] || BUILD_PATHS['internal'];
+      const stepsHtml = data.steps.map(function (step, i) {
+        return `<li><strong>Step ${i + 1}:</strong> ${step}</li>`;
+      }).join(``);
+
+      box.innerHTML = `
+        <div class="dossier-bar-left mb-sm">
+          <span class="tag">${data.badge}</span>
+        </div>
+        <h4 class="subhead">${data.title}</h4>
+        <p class="prose-muted">${data.summary}</p>
+        <ol style="margin: var(--space-sm) 0 0; padding-left: var(--space-lg); display: grid; gap: var(--space-xs); font-size: 0.9375rem;">
+          ${stepsHtml}
+        </ol>
+      `;
+    }
+
+    // =========================================================================
+    // SECTION 06: PERSISTENT CHECKLIST
+    // =========================================================================
+    function toggleChecklistStep(stepId) {
+      const idx = appState.completedSteps.indexOf(stepId);
+      if (idx === -1) {
+        appState.completedSteps.push(stepId);
+      } else {
+        appState.completedSteps.splice(idx, 1);
+      }
+      renderChecklist();
+      saveState();
+    }
+
+    function renderChecklist() {
+      const container = document.getElementById('checklist-container');
+      const fill = document.getElementById('checklist-progress-fill');
+      const bar = document.getElementById('checklist-progress-bar');
+      const heading = document.getElementById('checklist-summary-heading');
+      const pctLabel = document.getElementById('checklist-percent-label');
+      const headerReadout = document.getElementById('header-progress-readout');
+      if (!container) return;
+
+      const total = CHECKLIST_STEPS.length;
+      const doneCount = appState.completedSteps.length;
+      const pct = Math.round((doneCount / total) * 100);
+
+      if (fill) fill.style.width = `${pct}%`;
+      if (bar) bar.setAttribute('aria-valuenow', String(pct));
+      if (heading) heading.textContent = `${doneCount} of ${total} milestones completed`;
+      if (pctLabel) pctLabel.textContent = `${pct}% COMPLETE`;
+      if (headerReadout) headerReadout.textContent = `${doneCount} / ${total} STEPS APPLIED`;
+
+      container.innerHTML = CHECKLIST_STEPS.map(function (step, index) {
+        const isDone = appState.completedSteps.includes(step.id);
+        const num = String(index + 1).padStart(2, `0`);
+        return `
+          <label class="checklist-item${isDone ? ' done' : ''}">
+            <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleChecklistStep('${step.id}')">
+            <div>
+              <span class="index-num">${num}</span>
+              <strong style="margin-left: var(--space-xs);">${step.title}</strong>
+              <p class="prose-muted mt-xs" style="margin-bottom: 0;">${step.detail}</p>
+            </div>
+          </label>
+        `;
+      }).join(``);
+    }
+
+    function handleResetChecklist(btn) {
+      const msg = document.getElementById('checklist-status-msg');
+      if (!btn) return;
+      if (btn.dataset.armed !== 'true') {
+        btn.dataset.armed = 'true';
+        btn.textContent = 'Click again to confirm reset';
+        if (msg) msg.textContent = `Arming reset—click again to clear your ${appState.completedSteps.length} checked items.`;
+        return;
+      }
+      btn.dataset.armed = 'false';
+      btn.textContent = 'Reset Progress';
+      appState.completedSteps = [];
+      renderChecklist();
+      saveState();
+      if (msg) msg.textContent = `Checklist reset to 0 of ${CHECKLIST_STEPS.length} milestones.`;
+    }
+
+    function exportActionPlan() {
+      const msg = document.getElementById('checklist-status-msg');
+      const outEl = document.getElementById('pb-output-text');
+      const promptText = outEl ? outEl.textContent : ``;
+
+      const lines = [
+        `THE 2026 AI SYSTEMS DOSSIER — PERSONAL ACTION PLAN`,
+        `===================================================`,
+        `Recommended Ecosystem: ${(ECOSYSTEM_RESULTS[appState.ecoGoal] && ECOSYSTEM_RESULTS[appState.ecoGoal][appState.ecoStyle]) ? ECOSYSTEM_RESULTS[appState.ecoGoal][appState.ecoStyle].name : 'Claude'}`,
+        `Selected Vibe-Coding Path: ${BUILD_PATHS[appState.buildPath] ? BUILD_PATHS[appState.buildPath].title : 'Google AI Studio'}`,
+        ``,
+        `7-STEP IMPLEMENTATION PROGRESS (${appState.completedSteps.length}/${CHECKLIST_STEPS.length}):`
+      ];
+
+      CHECKLIST_STEPS.forEach(function (step, i) {
+        const mark = appState.completedSteps.includes(step.id) ? `[x]` : `[ ]`;
+        lines.push(`${mark} ${i + 1}. ${step.title} — ${step.detail}`);
+      });
+
+      lines.push(``);
+      lines.push(`CUSTOM ICC PROMPT:`);
+      lines.push(promptText);
+
+      const content = lines.join(`\n`);
+
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.triggerFileDownload === 'function') {
+          window.notebookAppApi.triggerFileDownload({
+            content: content,
+            contentType: 'text/plain',
+            encoding: 'UTF-8',
+            filename: 'ai-systems-action-plan.txt'
+          });
+          if (msg) msg.textContent = `Exported ai-systems-action-plan.txt.`;
+          return;
+        }
+      } catch (e) {
+        // Fallback below
+      }
+
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'ai-systems-action-plan.txt';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      if (msg) msg.textContent = `Exported ai-systems-action-plan.txt.`;
+    }
+
+    // =========================================================================
+    // INITIALIZATION & SCROLL REVEALS
+    // =========================================================================
+    function applyRestoredInputs() {
+      const goalEl = document.getElementById('eco-goal-select');
+      const styleEl = document.getElementById('eco-style-select');
+      const instEl = document.getElementById('pb-instructions');
+      const ctxEl = document.getElementById('pb-context');
+      const conEl = document.getElementById('pb-constraints');
+      const intEl = document.getElementById('pb-interview');
+      const ancEl = document.getElementById('pb-anchor');
+      const grdEl = document.getElementById('pb-guards');
+
+      if (goalEl) goalEl.value = appState.ecoGoal;
+      if (styleEl) styleEl.value = appState.ecoStyle;
+      if (instEl) instEl.value = appState.pbInstructions;
+      if (ctxEl) ctxEl.value = appState.pbContext;
+      if (conEl) conEl.value = appState.pbConstraints;
+      if (intEl) intEl.checked = Boolean(appState.pbInterview);
+      if (ancEl) ancEl.checked = Boolean(appState.pbAnchor);
+      if (grdEl) grdEl.checked = Boolean(appState.pbGuards);
+
+      // Sync skill filter pill
+      const skillButtons = document.querySelectorAll('#sec-skills .choice-pill');
+      skillButtons.forEach(function (btn) {
+        const match = btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(`'${appState.skillFilter}'`);
+        btn.setAttribute('aria-pressed', match ? 'true' : 'false');
+      });
+    }
+
+    function initScrollReveal() {
+      const nodes = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window)) {
+        nodes.forEach(function (n) { n.classList.add('visible'); });
+        return;
+      }
+      const obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      nodes.forEach(function (n) { obs.observe(n); });
+    }
+
+    async function initApp() {
+      await loadState();
+      applyRestoredInputs();
+      updateEcosystemFinder();
+      renderPromptBuilder();
+      renderSkillsGrid();
+      selectBuildPath(appState.buildPath);
+      renderChecklist();
+      initScrollReveal();
+
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+      if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === 'function') {
+        window.notebookAppApi.notifyAppReady();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
